@@ -11,10 +11,10 @@ Include files:
 
 ## Usage
 
-Form element:
+Demo form:
 
 ```html
-<form id="form" action="handle.html" method="post" enctype="multipart/form=data">
+<form id="form" action="handle.html" method="post" enctype="multipart/form-data">
 	<input name="text" type="text">
 	<input name="file" type="file">
 	<button type="submit">Submit</button>
@@ -23,7 +23,7 @@ Form element:
 Init with options:
 
 ```javascript
-$("#form).submitter({
+$("#form").submitter({
 	resetAfterDone: true,
 	messages: {
 		start: "Submit start.",
