@@ -1,6 +1,6 @@
 {
   "name": "submitter",
-  "description": "A jQuery plugin for submit form with no refresh.",
+  "description": "A jquery plugin for submit form with no refresh.",
   "version": "0.1.0",
   "author": "Fengyuan Chen",
   "devDependencies": {

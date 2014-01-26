@@ -1,4 +1,4 @@
-A simple, lightweight jQuery plugin for upload files.
+A jquery plugin for submit form with no refresh.
 
 ## Installation
 
@@ -6,50 +6,57 @@ Include files:
 
 ```html
 <script src="/path/to/jquery.js"></script><!-- jQuery is required -->
-<script src="/path/to/jquery.uploader.js"></script>
+<script src="/path/to/jquery.submitter.js"></script>
 ```
 
 ## Usage
 
-File input:
+Form element:
 
 ```html
-<input id="file" type="file">
+<form id="form" action="handle.html" method="post" enctype="multipart/form=data">
+	<input name="text" type="text">
+	<input name="file" type="file">
+	<button type="submit">Submit</button>
+</form>
 ```
 Init with options:
 
 ```javascript
-$("#file").uploader({
-	autoUpload: true,
-	url: undefined, // path to upload, e.g. "upload.php"
-	dataType: "json", // or "jsonp" for cross origin upload if the browser support
-	data: {}, // params of upload
-	name: undefined, // name for file input
-	multiple: false, // select multiple files if the browser support
-	singleUploads: true, // upload one by one if the browser support
-	maxLength: undefined, // the max length number of files one upload
-	maxSize: undefined, // the max size number of each file
-	
+$("#form).submitter({
+	resetAfterDone: true,
 	messages: {
-		input: "The current borwser doesn\'t support file input.",
-		type: "The type of the input element must be \"file\".",
-		length: "The number of selected files is exceeded the limit of <%= length %>.",
-		size: "The size of file \"<%= name %>\" is exceeded the limit of <%= size %>.",
-		unselected: "Please select files.",
-		success: "Upload Done.",
-		error: "Upload Error."
+		start: "Submit start.",
+		done: "Submit done.",
+		fail: "Submit fail.",
+		end: "Submit end."
 	},
-	
-	beforeUpload: function(file) { // output the local file data if the browser support
-		console.log(file);
+	ajaxOptions: { // options for $.ajax()
+		cache: false,
+		dataType: "json"
+		// ...
 	},
-	
-	success: function() {
-		console.log(this.messages.success);
+
+	isValidated: function() {
+		// validate before submit, return true to allow submit
+		return true; 
 	},
-	
-	error: function(message) {
-		console.log(message || this.messages.error);
+
+	start: function() {
+		console.log(this.messages.start);
+	},
+
+	done: function(data) {
+		// data: the handle result from server client
+		console.log(this.messages.done);
+	},
+
+	fail: function() {
+		console.log(this.messages.fail);
+	},
+
+	end: function() {
+		console.log(this.messages.end);
 	}
 });
 ```
