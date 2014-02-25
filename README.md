@@ -1,15 +1,18 @@
-A jquery plugin for submit form with no refresh.
+# Form Submitter
+A jQuery plugin for submit form with no refresh.
 
-## Installation
+## Getting started
+
+### Installation
 
 Include files:
 
 ```html
 <script src="/path/to/jquery.js"></script><!-- jQuery is required -->
-<script src="/path/to/jquery.submitter.js"></script>
+<script src="/path/to/submitter.js"></script>
 ```
 
-## Usage
+### Usage
 
 Demo form:
 
@@ -20,11 +23,12 @@ Demo form:
 	<button type="submit">Submit</button>
 </form>
 ```
-Init with options:
+
+Initialize with `$.fn.submitter` method
 
 ```javascript
 $("#form").submitter({
-	resetAfterDone: true,
+	resetAfterDone: true, // reset the form after submit success
 	messages: {
 		start: "Submit start.",
 		done: "Submit done.",
@@ -38,8 +42,9 @@ $("#form").submitter({
 	},
 
 	isValidated: function() {
-		// validate before submit, return true to allow submit
-		return true; 
+		// validate the form before submit
+		// return "true" to submit and "false" to cancel
+		return true;
 	},
 
 	start: function() {
