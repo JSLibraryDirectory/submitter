@@ -2,7 +2,7 @@
     "name": "submitter",
     "title": "Submitter",
     "description": "A jQuery plugin for submit form without refresh.",
-    "version": "0.1.0",
+    "version": "0.2.1",
     "author": "Fengyuan Chen",
     "homepage": "https://github.com/fengyuanchen/submitter",
     "license": "MIT",

@@ -1,4 +1,5 @@
 # Form Submitter
+
 A jQuery plugin for submit form with no refresh.
 
 ## Getting started
