@@ -55,36 +55,36 @@
     <div class="row">
       <div class="col-sm-6">
         <h3 class="page-header">Example</h3>
-        <form id="form" action="json/request.json" method="POST" enctype="multipart/form-data">
+        <form id="form" action="json/request.json">
           <div class="form-group">
             <label for="inputName">Name</label>
-            <input type="text" class="form-control" id="inputName" placeholder="Enter name">
+            <input type="text" class="form-control" id="inputName" name="name">
           </div>
           <div class="form-group">
             <label for="inputEmail">Email</label>
-            <input type="email" class="form-control" id="inputEmail" placeholder="Enter email">
+            <input type="email" class="form-control" id="inputEmail" name="email">
           </div>
           <div class="form-group">
-            <label for="inputAvatar">Avatar</label>
-            <input type="file" id="inputAvatar" accept="image/*">
+            <label for="inputComment">Comment</label>
+            <textarea class="form-control" id="inputComment" name="comment" rows="6"></textarea>
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>
       </div>
       <div class="col-sm-6">
         <h3 class="page-header">HTML</h3>
-        <pre class="prettyprint">&lt;form id=&quot;form&quot; action=&quot;json/request.json&quot; method=&quot;POST&quot; enctype=&quot;multipart/form-data&quot;&gt;
+        <pre class="prettyprint">&lt;form id=&quot;form&quot; action=&quot;json/request.json&quot;&gt;
   &lt;div class=&quot;form-group&quot;&gt;
     &lt;label for=&quot;inputName&quot;&gt;Name&lt;/label&gt;
-    &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;inputName&quot; placeholder=&quot;Enter name&quot;&gt;
+    &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;inputName&quot; name=&quot;name&quot;&gt;
   &lt;/div&gt;
   &lt;div class=&quot;form-group&quot;&gt;
     &lt;label for=&quot;inputEmail&quot;&gt;Email&lt;/label&gt;
-    &lt;input type=&quot;email&quot; class=&quot;form-control&quot; id=&quot;inputEmail&quot; placeholder=&quot;Enter email&quot;&gt;
+    &lt;input type=&quot;email&quot; class=&quot;form-control&quot; id=&quot;inputEmail&quot; name=&quot;email&quot;&gt;
   &lt;/div&gt;
   &lt;div class=&quot;form-group&quot;&gt;
-    &lt;label for=&quot;inputAvatar&quot;&gt;Avatar&lt;/label&gt;
-    &lt;input type=&quot;file&quot; id=&quot;inputAvatar&quot; accept=&quot;image/*&quot;&gt;
+    &lt;label for=&quot;inputComment&quot;&gt;Comment&lt;/label&gt;
+    &lt;textarea class=&quot;form-control&quot; id=&quot;inputComment&quot; name=&quot;comment&quot; rows=&quot;6&quot;&gt;&lt;/textarea&gt;
   &lt;/div&gt;
   &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Submit&lt;/button&gt;
 &lt;/form&gt;</pre>
