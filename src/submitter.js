@@ -1,278 +1,298 @@
-(function(factory) {
-    if (typeof define === "function" && define.amd) {
-        // AMD. Register as anonymous module.
-        define(["jquery"], factory);
-    } else {
-        // Browser globals.
-        factory(jQuery);
-    }
-}(function($) {
+/*!
+ * Submitter v@VERSION
+ * https://github.com/fengyuanchen/submitter
+ *
+ * Copyright (c) 2014-@YEAR Fengyuan Chen
+ * Released under the MIT license
+ *
+ * Date: @DATE
+ */
 
-    "use strict";
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as anonymous module.
+    define('submitter', ['jquery'], factory);
+  } else if (typeof exports === 'object') {
+    // Node / CommonJS
+    factory(require('jquery'));
+  } else {
+    // Browser globals.
+    factory(jQuery);
+  }
+})(function ($) {
 
-    var Submitter = function(form, options) {
-            options = $.isPlainObject(options) ? options : {};
-            this.$form = $(form);
-            this.defaults = $.extend(true, {}, Submitter.defaults, options);
-            this.init();
-        };
+  'use strict';
 
-    Submitter.prototype = {
-        constructor: Submitter,
+  var FormData = window.FormData,
 
-        support: {
-            formData: !!window.FormData
-        },
+      // Constants
+      NAMESPACE = 'submitter',
 
-        init: function() {
-            var url = this.defaults.ajaxOptions.url || this.defaults.url || this.$form.attr("action") || "",
-                settings,
-                defaults,
-                $submit,
-                $reset;
+      // Events
+      EVENT_SUBMIT = 'submit.' + NAMESPACE,
+      EVENT_START = 'start.' + NAMESPACE,
+      EVENT_DONE = 'done.' + NAMESPACE,
+      EVENT_FAIL = 'fail.' + NAMESPACE,
+      EVENT_END = 'end.' + NAMESPACE;
 
-            if (!url) {
-                return;
-            }
+  function Submitter(element, options) {
+    this.$element = $(element);
+    this.options = $.extend({}, Submitter.DEFAULTS, $.isPlainObject(options) && options);
+    this.disabled = false;
+    this.sync = false;
+    this.init();
+  }
 
-            $submit = this.$form.find(":submit");
+  Submitter.prototype = {
+    constructor: Submitter,
 
-            this.url = url;
+    init: function () {
+      var options = this.options,
+          $this = this.$element;
 
-            defaults = {
-                type: this.$form.attr("method") || "GET"
-            };
+      if (!options.url) {
+        options.url = $this.prop('action'); // Use the current page if not set
+      }
 
-            settings = {
-                beforeSend: $.proxy(this.start, this),
-                success: $.proxy(this.done, this),
-                error: $.proxy(this.fail, this),
-                complete: $.proxy(this.end, this)
-            };
+      // The "options.type" is for versions of jQuery prior to 1.9.0
+      if (!options.method || !options.type) {
+        options.method = $this.prop('method');
+      }
 
-            this.ajaxOptions = $.extend({}, defaults, this.defaults.ajaxOptions, settings);
+      if (!FormData && $this.find(':file').length) {
+        this.sync = true;
+        this.initIframe();
+      }
 
-            if (!this.defaults.async) {
-                this.initIframe();
-            }
+      this.bind();
+    },
 
-            if (this.$form.find(":file").length > 0 && !this.support.formData) {
-                this.defaults.async = false;
-                this.initIframe();
-            }
+    bind: function () {
+      var options = this.options,
+          $this = this.$element;
 
-            if ($submit.length === 0) {
-                $submit = $("<button type=\"submit\" style=\"display:none;\">Submit</button>");
-                this.$form.append($submit);
-            }
+      if ($.isFunction(options.start)) {
+        $this.on(EVENT_START, options.start);
+      }
 
-            this.$submit = $submit;
+      if ($.isFunction(options.done)) {
+        $this.on(EVENT_DONE, options.done);
+      }
 
-            if (this.defaults.resetAfterDone) {
-                $reset = this.$form.find(":reset");
+      if ($.isFunction(options.fail)) {
+        $this.on(EVENT_FAIL, options.fail);
+      }
 
-                if ($reset.length === 0) {
-                    $reset = $("<button type=\"reset\" style=\"display:none;\">Reset</button>");
-                    this.$form.append($reset);
-                }
+      if ($.isFunction(options.end)) {
+        $this.on(EVENT_END, options.end);
+      }
 
-                this.$reset = $reset;
-            }
+      $this.on(EVENT_SUBMIT, $.proxy(this.submit, this));
+    },
 
-            this.formTarget = this.$form.attr("target");
+    unbind: function () {
+      var options = this.options,
+          $this = this.$element;
 
-            this.enable();
-        },
+      if ($.isFunction(options.start)) {
+        $this.off(EVENT_START, options.start);
+      }
 
-        enable: function() {
-            this.$form.on("submit", $.proxy(this.submit, this));
-        },
+      if ($.isFunction(options.done)) {
+        $this.off(EVENT_DONE, options.done);
+      }
 
-        disable: function() {
-            this.$form.attr("target", this.formTarget).off(this.submit);
-            this.$form = null;
+      if ($.isFunction(options.fail)) {
+        $this.off(EVENT_FAIL, options.fail);
+      }
 
-            if (this.$iframe) {
-                this.$iframe.off("load").remove();
-                this.$iframe = null;
-            }
+      if ($.isFunction(options.end)) {
+        $this.off(EVENT_END, options.end);
+      }
 
-            this.$submit = null;
-            this.$reset = null;
-            this.ajaxOptions = null;
-            this.defaults = null;
-        },
+      $this.off(EVENT_SUBMIT, this.submit);
+    },
 
-        submit: function() {
-            if (!this.defaults.isValidated()) {
-                return false;
-            }
+    submit: function (e) {
+      var options = this.options,
+          $this = this.$element,
+          startEvent = $.Event(EVENT_START),
+          ajaxOptions;
 
-            if (!this.defaults.async) {
-                this.start(null); // submit by iframe
-            } else {
-                this.ajaxSubmit(); // submit by ajax
-                return false;
-            }
-        },
+      if (this.disabled) {
+        e.preventDefault();
+        return;
+      }
 
-        start: function() {
-            this.$submit.prop("disabled", true);
+      $this.trigger(startEvent);
 
-            if ($.isFunction(this.defaults.start)) {
-                this.defaults.start("submitStart");
-            }
+      if (startEvent.isDefaultPrevented()) {
+        e.preventDefault();
+        return;
+      }
 
-            if ($.isFunction(this.defaults.ajaxOptions.beforeSend)) {
-                this.defaults.ajaxOptions.beforeSend(arguments);
-            }
-        },
+      this.disabled = true;
+      $this.find(':submit').prop('disabled', true);
 
-        done: function(data) {
-            if ($.isFunction(this.defaults.done)) {
-                this.defaults.done(data, "submitSuccess");
-            }
+      if (!this.sync) {
+        e.preventDefault();
 
-            if ($.isFunction(this.defaults.ajaxOptions.success)) {
-                this.defaults.ajaxOptions.success(arguments);
-            }
-
-            if (this.defaults.resetAfterDone && this.$reset) {
-                this.$reset.click();
-            }
-        },
-
-        fail: function() {
-            if ($.isFunction(this.defaults.fail)) {
-                this.defaults.fail("submitError");
-            }
-
-            if ($.isFunction(this.defaults.ajaxOptions.error)) {
-                this.defaults.ajaxOptions.error(arguments);
-            }
-        },
-
-        end: function() {
-            this.$submit.prop("disabled", false);
-
-            if ($.isFunction(this.defaults.end)) {
-                this.defaults.end("submitComplete");
-            }
-
-            if ($.isFunction(this.defaults.ajaxOptions.complete)) {
-                this.defaults.ajaxOptions.complete(arguments);
-            }
-        },
-
-        ajaxSubmit: function() {
-            var ajaxOptions = $.extend({}, this.ajaxOptions);
-
-            if (this.support.formData) {
-                ajaxOptions.data = new FormData(this.$form[0]);
-                ajaxOptions.type = "POST";
-                ajaxOptions.processData = false;
-                ajaxOptions.contentType = false;
-            } else {
-                ajaxOptions.data = this.$form.serialize();
-            }
-
-            $.ajax(this.url, ajaxOptions);
-        },
-
-        initIframe: function() {
-            var iframeName = "submitter-" + Math.random().toString().replace("0.", ""),
-                $iframe = $("<iframe name=\"" + iframeName + "\" style=\"display:none;\"></iframe>"),
-                that = this;
-
-            $iframe.on("load", function() {
-                var data,
-                    win,
-                    doc;
-
-                try {
-                    win = this.contentWindow;
-                    doc = this.contentDocument;
-
-                    doc = doc ? doc : win.document;
-                    data = doc ? doc.body.innerText : null;
-                    data = typeof data === "string" ? $.parseJSON(data) : data;
-                } catch (e) {
-                    // throw new Error(e.message);
-                    that.fail(null, "submitError", e.message);
-                }
-
-                if (!data) {
-                    return;
-                }
-
-                if ($.isPlainObject(data)) {
-                    that.done(data, "submitSuccess", null);
-                } else {
-                    that.fail(null, "submitError", "The response data must be JSON.");
-                }
-
-                that.end(null, "submitComplete");
-            });
-
-            if (this.defaults.ajaxOptions.type) {
-                this.$form.attr("method", this.defaults.ajaxOptions.type);
-            }
-
-            this.$form.attr("target", iframeName).after($iframe);
-            this.$iframe = $iframe;
-        }
-    };
-
-    Submitter.defaults = {
-        async: true,
-        resetAfterDone: false,
-        url: undefined,
-
-        ajaxOptions: {
-            dataType: "json"
-        },
-
-        messages: {
-            start: "Submit start.",
-            done: "Submit done.",
-            fail: "Submit fail.",
-            end: "Submit end."
-        },
-
-        isValidated: function() {
-            // prevent to submit form, return "true" to submit and "false" to cancel
-            return true;
-        },
-
-        start: function(/* textStatus */) {
-            // console.log(this.messages.start);
-        },
-
-        done: function(/* data, textStatus */) {
-            // console.log(this.messages.done);
-        },
-
-        fail: function(/* textStatus */) {
-            // console.log(this.messages.fail);
-        },
-
-        end: function(/* textStatus */) {
-            // console.log(this.messages.end);
-        }
-    };
-
-    Submitter.setDefaults = function(options) {
-        $.extend(Submitter.defaults, options);
-    };
-
-    // Register as jQuery plugin
-    $.fn.submitter = function(options) {
-        return this.each(function() {
-            $(this).data("submitter", new Submitter(this, options));
+        ajaxOptions = $.extend({}, options, {
+          success: $.proxy(this.success, this),
+          error: $.proxy(this.error, this),
+          complete: $.proxy(this.complete, this)
         });
-    };
 
-    $.fn.submitter.Constructor = Submitter;
-    $.fn.submitter.setDefaults = Submitter.setDefaults;
+        if (FormData) {
+          ajaxOptions.data = new FormData($this[0]);
+          ajaxOptions.processData = false;
+          ajaxOptions.contentType = false;
+        } else {
+          ajaxOptions.data = $this.serialize();
+        }
 
-}));
+        $.ajax(ajaxOptions.url, ajaxOptions);
+      }
+    },
+
+    success: function (data, textStatus, jqXHR) {
+      var options = this.options;
+
+      if ($.isFunction(options.success)) {
+        options.success(data, textStatus, jqXHR);
+      }
+
+      this.$element.trigger(EVENT_DONE, data, textStatus);
+    },
+
+    error: function (jqXHR, textStatus, errorThrown) {
+      var options = this.options;
+
+      if ($.isFunction(options.error)) {
+        options.error(jqXHR, textStatus, errorThrown);
+      }
+
+      this.$element.trigger(EVENT_FAIL, textStatus, errorThrown);
+    },
+
+    complete: function (jqXHR, textStatus) {
+      var options = this.options,
+          $this = this.$element;
+
+      this.disabled = false;
+      $this.find(':submit').prop('disabled', false);
+
+      if ($.isFunction(options.complete)) {
+        options.complete(jqXHR, textStatus);
+      }
+
+      $this.trigger(EVENT_END, textStatus);
+    },
+
+    destroy: function () {
+      this.unbind();
+
+      if (this.sync) {
+        this.$iframe.off('load').remove();
+      }
+
+      this.$element.removeData(NAMESPACE);
+    },
+
+    initIframe: function () {
+      var iframeName = NAMESPACE + (new Date()).getTime(),
+          $iframe = $('<iframe name="' + iframeName + '"></iframe>').hide(),
+          _this = this;
+
+      // Ready iframe
+      $iframe.one('load', function () {
+
+        // Respond submit
+        $iframe.on('load', function () {
+          var message,
+              data;
+
+          try {
+            data = $(this).contents().find('body').text();
+
+            if (_this.options.dataType === 'json') {
+              data = $.parseJSON(data);
+            }
+          } catch (e) {
+            message = e.message;
+          }
+
+          if (message) {
+            _this.error(null, 'error', message);
+          } else {
+            _this.success(data, 'success', null);
+          }
+
+          _this.complete(null, 'complete');
+        });
+      });
+
+      this.$element.attr('target', iframeName).after($iframe);
+      this.$iframe = $iframe;
+    }
+  };
+
+  Submitter.DEFAULTS = {
+    // Note: jQuery.ajax's options are available too.
+
+    // Request URL, use form's "action" property by default
+    // Type: String
+    url: '',
+
+    // Request method, use form's "method" property by default
+    // Type: String
+    method: '',
+
+    // Events (shortcuts)
+    // Type: Function
+    start: null,
+    done: null,
+    fail: null,
+    end: null
+  };
+
+  Submitter.setDefaults = function (options) {
+    $.extend(Submitter.DEFAULTS, options);
+  };
+
+  // Save the other submitter
+  Submitter.other = $.fn.submitter;
+
+  // Register as jQuery plugin
+  $.fn.submitter = function (options) {
+    var args = [].slice.call(arguments, 1);
+
+    return this.each(function () {
+      var $this = $(this),
+          data = $this.data(NAMESPACE),
+          fn;
+
+      if (!data) {
+        if (/destroy/.test(options)) {
+          return;
+        }
+
+        $this.data(NAMESPACE, (data = new Submitter(this, options)));
+      }
+
+      if (typeof options === 'string' && $.isFunction((fn = data[options]))) {
+        fn.apply(data, args);
+      }
+    });
+  };
+
+  $.fn.submitter.Constructor = Submitter;
+  $.fn.submitter.setDefaults = Submitter.setDefaults;
+
+  // No conflict
+  $.fn.submitter.noConflict = function () {
+    $.fn.submitter = Submitter.other;
+    return this;
+  };
+
+});

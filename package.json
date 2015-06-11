@@ -1,19 +1,46 @@
 {
-    "name": "submitter",
-    "title": "Submitter",
-    "description": "A jQuery plugin for submit form without refresh.",
-    "version": "0.2.1",
-    "author": "Fengyuan Chen",
-    "homepage": "https://github.com/fengyuanchen/submitter",
-    "license": "MIT",
-    "devDependencies": {
-        "grunt": "~0.4.2",
-        "grunt-banner": "~0.2.1",
-        "grunt-contrib-clean": "~0.5.0",
-        "grunt-contrib-concat": "~0.3.0",
-        "grunt-contrib-jshint": "~0.8.0",
-        "grunt-contrib-copy": "~0.5.0",
-        "grunt-contrib-uglify": "~0.3.2",
-        "grunt-contrib-watch": "~0.5.3"
-    }
+  "name": "submitter",
+  "description": "A simple jQuery form submitting plugin.",
+  "version": "0.3.0",
+  "main": "dist/submitter.js",
+  "keywords": [
+    "form",
+    "submit",
+    "jquery",
+    "plugin",
+    "html",
+    "css",
+    "javascript",
+    "front-end",
+    "web",
+    "development"
+  ],
+  "author": {
+    "name": "Fengyuan Chen",
+    "url": "https://github.com/fengyuanchen"
+  },
+  "homepage": "https://github.com/fengyuanchen/submitter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fengyuanchen/submitter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fengyuanchen/submitter/issues"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/fengyuanchen/submitter/blob/master/LICENSE.md"
+  },
+  "dependencies": {
+    "jquery": ">= 1.9.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9",
+    "gulp-jscs": "^1.5.1",
+    "gulp-jshint": "^1.11.0",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-replace": "^0.5.3",
+    "gulp-uglify": "^1.1.0"
+  }
 }
