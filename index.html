@@ -9,7 +9,7 @@
   <meta name="author" content="Fengyuan Chen">
   <title>Submitter</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.rawgit.com/fengyuanchen/tooltip/v0.0.1/dist/tooltip.min.css" rel="stylesheet">
+  <link href="https://cdn.rawgit.com/fengyuanchen/tooltip/v0.0.2/dist/tooltip.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -104,22 +104,16 @@
         $name.focus();
 
         // Tooltip: https://github.com/fengyuanchen/tooltip
-        $body.tooltip('show', 'Please enter a name', {
-          style: 'warning'
-        });
+        $body.tooltip('Please enter a name', 'warning');
       }
     },
     done: function (e, data) {
       if ($.isPlainObject(data) &amp;&amp; data.success) {
-        $body.tooltip('show', data.result, {
-          style: 'success'
-        });
+        $body.tooltip(data.result, 'success');
       }
     },
     fail: function (e, textStatus) {
-      $body.tooltip('show', textStatus, {
-        style: 'danger'
-      });
+      $body.tooltip(textStatus, 'danger');
     }
   });
 });
@@ -139,7 +133,7 @@
   <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-  <script src="https://cdn.rawgit.com/fengyuanchen/tooltip/v0.0.1/dist/tooltip.min.js"></script>
+  <script src="https://cdn.rawgit.com/fengyuanchen/tooltip/v0.0.2/dist/tooltip.min.js"></script>
   <script src="js/submitter.js"></script>
   <script src="js/main.js"></script>
 </body>
