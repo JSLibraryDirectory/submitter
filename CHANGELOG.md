@@ -4,7 +4,7 @@
 ## 0.3.0 (Jun 10, 2015)
 
 - Supports jQuery's ajax options
-- Supports one method: 'destroy'
+- Supports one method: "destroy"
 - Supports four events: "start.submitter", "done.submitter", "fail.submitter", "end.submitter"
 
 
