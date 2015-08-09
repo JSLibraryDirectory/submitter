@@ -1,5 +1,5 @@
 {
-  "name": "submitter",
+  "name": "@fengyuanchen/submitter",
   "description": "A simple jQuery form submitting plugin.",
   "version": "0.3.0",
   "main": "dist/submitter.js",
