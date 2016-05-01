@@ -54,9 +54,9 @@
         options.url = $this.prop('action'); // Use the current page if not set
       }
 
-      // The "options.type" is for versions of jQuery prior to 1.9.0
-      if (!options.method || !options.type) {
-        options.method = $this.prop('method');
+      if (!options.method) {
+        // The "options.type" is for versions of jQuery prior to 1.9.0
+        options.method = options.type || $this.prop('method');
       }
 
       if (!FormData && $this.find(':file').length) {
