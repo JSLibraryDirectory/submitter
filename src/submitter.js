@@ -56,7 +56,7 @@
 
       if (!options.method) {
         // The "options.type" is for versions of jQuery prior to 1.9.0
-        options.method = options.type || $this.prop('method');
+        options.method = options.type || $this.attr('method') || $this.prop('method');
       }
 
       if (!FormData && $this.find(':file').length) {
