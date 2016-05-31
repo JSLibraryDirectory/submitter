@@ -23,17 +23,17 @@
 
   'use strict';
 
-  var FormData = window.FormData,
+  var FormData = window.FormData;
 
-      // Constants
-      NAMESPACE = 'submitter',
+  // Constants
+  var NAMESPACE = 'submitter';
 
-      // Events
-      EVENT_SUBMIT = 'submit.' + NAMESPACE,
-      EVENT_START = 'start.' + NAMESPACE,
-      EVENT_DONE = 'done.' + NAMESPACE,
-      EVENT_FAIL = 'fail.' + NAMESPACE,
-      EVENT_END = 'end.' + NAMESPACE;
+  // Events
+  var EVENT_SUBMIT = 'submit.' + NAMESPACE;
+  var EVENT_START = 'start.' + NAMESPACE;
+  var EVENT_DONE = 'done.' + NAMESPACE;
+  var EVENT_FAIL = 'fail.' + NAMESPACE;
+  var EVENT_END = 'end.' + NAMESPACE;
 
   function Submitter(element, options) {
     this.$element = $(element);
@@ -47,8 +47,8 @@
     constructor: Submitter,
 
     init: function () {
-      var options = this.options,
-          $this = this.$element;
+      var options = this.options;
+      var $this = this.$element;
 
       if (!options.url) {
         options.url = $this.prop('action'); // Use the current page if not set
@@ -68,8 +68,8 @@
     },
 
     bind: function () {
-      var options = this.options,
-          $this = this.$element;
+      var options = this.options;
+      var $this = this.$element;
 
       if ($.isFunction(options.start)) {
         $this.on(EVENT_START, options.start);
@@ -91,8 +91,8 @@
     },
 
     unbind: function () {
-      var options = this.options,
-          $this = this.$element;
+      var options = this.options;
+      var $this = this.$element;
 
       if ($.isFunction(options.start)) {
         $this.off(EVENT_START, options.start);
@@ -114,10 +114,10 @@
     },
 
     submit: function (e) {
-      var options = this.options,
-          $this = this.$element,
-          startEvent = $.Event(EVENT_START),
-          ajaxOptions;
+      var options = this.options;
+      var $this = this.$element;
+      var startEvent = $.Event(EVENT_START);
+      var ajaxOptions;
 
       if (this.disabled) {
         e.preventDefault();
@@ -176,8 +176,8 @@
     },
 
     complete: function (jqXHR, textStatus) {
-      var options = this.options,
-          $this = this.$element;
+      var options = this.options;
+      var $this = this.$element;
 
       this.disabled = false;
       $this.find(':submit').prop('disabled', false);
@@ -200,17 +200,17 @@
     },
 
     initIframe: function () {
-      var iframeName = NAMESPACE + (new Date()).getTime(),
-          $iframe = $('<iframe name="' + iframeName + '"></iframe>').hide(),
-          _this = this;
+      var iframeName = NAMESPACE + (new Date()).getTime();
+      var $iframe = $('<iframe name="' + iframeName + '"></iframe>').hide();
+      var _this = this;
 
       // Ready iframe
       $iframe.one('load', function () {
 
         // Respond submit
         $iframe.on('load', function () {
-          var message,
-              data;
+          var message;
+          var data;
 
           try {
             data = $(this).contents().find('body').text();
@@ -268,9 +268,9 @@
     var args = [].slice.call(arguments, 1);
 
     return this.each(function () {
-      var $this = $(this),
-          data = $this.data(NAMESPACE),
-          fn;
+      var $this = $(this);
+      var data = $this.data(NAMESPACE);
+      var fn;
 
       if (!data) {
         if (/destroy/.test(options)) {
@@ -280,7 +280,7 @@
         $this.data(NAMESPACE, (data = new Submitter(this, options)));
       }
 
-      if (typeof options === 'string' && $.isFunction((fn = data[options]))) {
+      if (typeof options === 'string' && $.isFunction(fn = data[options])) {
         fn.apply(data, args);
       }
     });

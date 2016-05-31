@@ -1,8 +1,8 @@
-# [Form Submitter](https://github.com/fengyuanchen/submitter)
+# Submitter
 
 > A simple jQuery form submitting plugin.
 
-- [Demo](http://fengyuanchen.github.io/submitter)
+- [Demo](https://fengyuanchen.github.io/submitter)
 
 
 ## Main
@@ -10,7 +10,7 @@
 ```
 dist/
 ├── submitter.js      (7 KB)
-└── submitter.min.js  (3 KB)
+└── submitter.min.js  (4 KB)
 ```
 
 
@@ -77,7 +77,7 @@ A string containing the URL to which the request is sent.
 - Type: `String`
 - Default: The form's "method" property
 
-The HTTP method to use for the request (e.g. "POST", "GET", "PUT").
+The HTTP method to use for the request (e.g. "POST", "GET").
 
 
 ### start(event)
@@ -167,16 +167,23 @@ If you have to use other plugin with the same namespace, just call the `$.fn.sub
 
 ## Browser Support
 
-- Chrome (latest 2)
-- Firefox (latest 2)
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Opera (latest)
+- Edge (latest)
 - Internet Explorer 8+
-- Opera (latest 2)
-- Safari (latest 2)
 
 As a jQuery plugin, you also need to see the [jQuery Browser Support](http://jquery.com/browser-support/).
 
 
 
-## [License](LICENSE.md)
+## Versioning
 
-Released under the [MIT](http://opensource.org/licenses/mit-license.html) license.
+Maintained under the [Semantic Versioning guidelines](http://semver.org/).
+
+
+
+## License
+
+[MIT](http://opensource.org/licenses/MIT) © [Fengyuan Chen](http://chenfengyuan.com)

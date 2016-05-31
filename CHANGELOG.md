@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 0.3.1 (May 31, 2016)
+
+- Fixed a bug of the "method" option.
+
+
 ## 0.3.0 (Jun 10, 2015)
 
 - Supports jQuery's ajax options
