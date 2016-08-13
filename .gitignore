@@ -1,4 +1,5 @@
-# Files to ignore
-
+# Project
 node_modules
-_*
+bower_components
+dist/*.map
+/_*
